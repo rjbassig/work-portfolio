@@ -1,0 +1,3 @@
+"use client";
+import { useEffect, useState } from "react";
+export function CoordinateReadout() { const [point, setPoint] = useState({ x: 32, y: 68 }); useEffect(() => { const move = (event: MouseEvent) => setPoint({ x: Math.round((event.clientX / window.innerWidth) * 100), y: Math.round((event.clientY / window.innerHeight) * 100) }); window.addEventListener("mousemove", move); return () => window.removeEventListener("mousemove", move); }, []); return <div className="readout" aria-hidden="true"><span>POSITION</span><b>X {String(point.x).padStart(2, "0")} · Y {String(point.y).padStart(2, "0")}</b></div>; }

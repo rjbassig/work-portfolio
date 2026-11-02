@@ -1,0 +1,2 @@
+export function TrophyIcon({ size = 22 }: { size?: number }) { return <span className="trophy-icon" aria-label="Achievement" style={{ width: size, height: size, flex: `0 0 ${size}px` }}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10v5a5 5 0 0 1-10 0V4Zm0 2H4v1a4 4 0 0 0 3 3.8M17 6h3v1a4 4 0 0 1-3 3.8M12 14v4m-4 2h8M9 18h6" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/></svg></span>;
+}
