@@ -1,4 +1,3 @@
 import Link from "next/link";
 import { writing } from "@/data/site";
-export const metadata = { title: "Writing" };
 export default function WritingPage() { return <section className="shell listing-page writing-page"><p className="eyebrow">02 / WRITING</p><div className="listing-head"><h1>writing</h1><p>my thoughts and reflections.</p></div><section className="writing-group"><p className="eyebrow">01 / TECH</p><div className="writing-index">{writing.map((entry) => <Link href={`/writing/${entry.slug}`} key={entry.slug}><span>{entry.number}</span><div><h2>{entry.title}</h2><p>{entry.subtitle}</p></div><time>{entry.date}</time><b>↗</b></Link>)}</div></section><section className="writing-group empty"><p className="eyebrow">02 / READING, PHILOSOPHY, ETC.</p><p>nothing here yet.</p></section></section>; }
