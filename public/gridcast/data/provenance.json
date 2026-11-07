@@ -1,0 +1,8 @@
+{
+  "source": "GridCast research release 0.1",
+  "replay": "experiments/results/predictions.parquet",
+  "accuracy": "experiments/results/summary.json leaderboard (test rows)",
+  "coverage": "experiments/results/summary.json validation-selected test rows",
+  "importance": "experiments/results/importance.csv",
+  "market_history": "data/processed/demand.parquet and price.parquet daily means"
+}
