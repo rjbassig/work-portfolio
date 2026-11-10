@@ -1,0 +1,11 @@
+import Link from "next/link";
+
+const sections = [
+  ["Research overview", "CrashCast estimates next-week relative collision risk across San Diego Police beats. It is aggregate forecasting research, not individual-crash or street-level prediction."],
+  ["Data provenance", "The source snapshot contains 78,715 unique San Diego Police collision reports from 2015-03-19 through 2026-11-06 across 148 beats. The source offers block-level address components, not verified collision coordinates."],
+  ["Methodology", "The research uses lagged count history, shifted rolling severity and hit-and-run summaries, beat identity, and calendar seasonality. Every feature is shifted before the forecast week. Training ends in 2023, selection uses 2024, and the 2025 test year remains held out."],
+  ["Results", "On 7,696 held-out beat-week rows, Poisson gradient boosting achieved count MAE 0.698 versus 0.888 for the seasonal-naive baseline. The separate next-week occurrence classifier had PR-AUC 0.815 and Brier score 0.162."],
+  ["Limitations", "Collision reporting, exposure, and enforcement vary over time and geography. Police beats are administrative units, and the source does not fully cover property-damage-only or CHP freeway incidents. Results should not be used for individual or enforcement decisions."],
+];
+
+export default function CrashcastReport() { return <article className="shell gridcast-report-page"><header><p className="eyebrow">APPLIED URBAN SAFETY ANALYTICS / RESEARCH RELEASE 0.1</p><h1>CRASHCAST</h1><p className="report-subtitle">A Reproducible Framework for Weekly Collision-Risk Ranking in San Diego</p><div><Link href="/work/crashcast">← BACK TO PROJECT</Link><a href="/crashcast/crashcast_research_report.pdf" target="_blank" rel="noreferrer">DOWNLOAD RESEARCH PDF ↗</a></div></header><div className="report-sections">{sections.map(([title, text], index) => <section key={title}><span>{String(index + 1).padStart(2, "0")}</span><div><h2>{title}</h2><p>{text}</p>{index === 1 && <img className="crashcast-report-image" src="/crashcast/collision_history.png" alt="Monthly reported San Diego Police collision counts" />}{index === 3 && <img className="crashcast-report-image" src="/crashcast/held_out_forecast.png" alt="Held-out 2025 forecasts and observations" />}</div></section>)}</div></article>; }
