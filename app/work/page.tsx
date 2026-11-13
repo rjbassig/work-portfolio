@@ -24,7 +24,7 @@ export default function WorkPage() {
         <div className={styles.logoCell}><CDTechMark /></div>
         <div className={styles.details}>
           <div className={styles.meta}><span>CDTech / Overloaded</span><span>Jan 2022 – Sep 2024</span></div>
-          <h2>Data Science Analytics</h2>
+          <h2>Data Science &amp; Analytics</h2>
           <p>Collected, cleaned, and analyzed customer and transactional data to improve operational workflows, identify recurring issues, and support customer fulfillment.</p>
         </div>
       </div>
@@ -48,7 +48,7 @@ export default function WorkPage() {
         <div className={styles.logoCell}><LogoMark src="/dataworks-logo-monochrome.png" alt="DataWorks UCSD logo" /></div>
         <div className={styles.details}>
           <div className={styles.meta}><span>DataWorks UCSD</span><span>Sep 2026 – Present</span></div>
-          <h2>Project &amp; Consulting Member</h2>
+          <h2>Projects &amp; Consulting Manager</h2>
           <p>Participating in collaborative project management and consulting activities focused on data-driven problem-solving.</p>
         </div>
       </div>
