@@ -1,1 +1,16 @@
-.experience{grid-template-columns:1fr 2fr;gap:30px}.experience>.left{border-left:0;padding-left:0;display:grid;grid-template-columns:max-content minmax(0,1fr);align-items:center}.left p{margin:0}.left>span{justify-self:center}.experience>.details{border-left:1px solid var(--rule);padding-left:25px}.details section{margin:0}@media(max-width:800px){.experience{grid-template-columns:1fr;gap:16px}.experience>.left{border-top:0;padding:0}.experience>.details{border-left:0;border-top:1px solid var(--rule);padding:16px 0 0}}
+.group{margin-top:100px;border-top:1px solid var(--rule)}
+.entry{display:grid;grid-template-columns:minmax(150px,1fr) 90px minmax(0,2fr);gap:20px;padding:20px 0;border-bottom:1px solid var(--rule)}
+.sectionLabel{min-width:0;align-self:center}
+.sectionLabel p{margin:0}
+.logoCell{display:grid;place-items:center;align-self:center}
+.details{border-left:1px solid var(--rule);padding-left:25px;align-self:stretch;display:flex;flex-direction:column;justify-content:center}
+.meta{display:flex;align-items:baseline;justify-content:space-between;gap:18px;font:10px "DM Mono",monospace;letter-spacing:.07em;text-transform:uppercase}
+.meta span:first-child{color:var(--accent)}
+.meta span:last-child{color:var(--muted);white-space:nowrap;text-align:right}
+.details h2{font-size:21px;margin:5px 0}
+.details p{max-width:620px;color:var(--muted);margin:0}
+.mark{width:70px;height:70px;display:grid;place-items:center}
+.mark img{width:100%;height:100%;object-fit:contain;filter:grayscale(1) brightness(1.25) contrast(1.2);opacity:1}
+:global([data-theme="light"]) .mark img{filter:grayscale(1) brightness(.2) contrast(1.15);opacity:.9}
+@media(max-width:800px){.group{margin-top:65px}.entry{grid-template-columns:minmax(0,1fr) 58px;gap:13px;padding:16px 0}.sectionLabel{align-self:center}.logoCell{grid-column:2;grid-row:1}.details{grid-column:1 / -1;border-left:0;border-top:1px solid var(--rule);padding:16px 0 0}.mark{width:52px;height:52px}.details h2{font-size:19px}}
+@media(max-width:480px){.meta{align-items:flex-start;flex-wrap:wrap;gap:4px 12px}.meta span:last-child{width:100%;text-align:left}}
