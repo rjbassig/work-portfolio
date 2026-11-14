@@ -1,1 +1,7 @@
-.shell{position:relative;min-height:154px;overflow:hidden;touch-action:none;background:var(--bg)}.canvas{position:absolute!important;inset:0;width:100%!important;height:100%!important;opacity:0;transition:opacity .4s ease}.ready .canvas{opacity:1}@media(max-width:800px){.shell{height:150px;min-height:0}}@media(prefers-reduced-motion:reduce){.canvas{transition:none}}
+.shell{position:relative;min-height:154px;overflow:hidden;touch-action:none;background:var(--bg)}.canvas{position:absolute!important;inset:0;width:100%!important;height:100%!important;opacity:0;transition:opacity .4s ease}.ready .canvas{opacity:1}
+/* The canvas tracks its container, so these viewport-relative heights scale the complete
+   WebGL scene—including the rings—without changing its camera, materials, or motion. */
+@media(max-width:800px){.shell{height:clamp(116px,30vw,150px);min-height:0}}
+@media(max-width:389px){.shell{height:116px}}
+@media(max-width:800px) and (orientation:landscape){.shell{height:112px}}
+@media(prefers-reduced-motion:reduce){.canvas{transition:none}}
