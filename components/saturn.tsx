@@ -35,24 +35,28 @@ function UltraRings() {
 }
 
 function SaturnModel({ reducedMotion, cinematic, quality }: { reducedMotion: boolean; cinematic: boolean; quality: SaturnQuality }) {
-  const system = useRef<THREE.Group>(null); const tilt = useRef<THREE.Group>(null); const planetSpin = useRef<THREE.Group>(null);
-  useFrame((state, delta) => { if (reducedMotion || !system.current || !tilt.current || !planetSpin.current) return; const time = state.clock.getElapsedTime(); if (cinematic) {
+  const floatingSystem = useRef<THREE.Group>(null); const system = useRef<THREE.Group>(null); const tilt = useRef<THREE.Group>(null); const planetSpin = useRef<THREE.Group>(null);
+  useFrame((state, delta) => { if (reducedMotion || !floatingSystem.current || !system.current || !tilt.current || !planetSpin.current) return; const time = state.clock.getElapsedTime(); if (cinematic) {
     const growth = time < 0.5 ? time / 0.5 : Math.min((time - 0.5) / 1.7, 1);
     const originalScale = time < 0.5 ? .82 + growth * .13 : time < 2.2 ? .95 + (1.95 - .95) * (1 - (1 - growth) * (1 - growth)) : 1.95 + (10 - 1.95) * Math.pow(Math.min((time - 2.2) / 1, 1), 3);
     const mobile = state.size.width <= 800;
     const camera = state.camera as THREE.PerspectiveCamera;
     const halfHeight = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * camera.position.length();
     const planetLimit = Math.min(halfHeight * camera.aspect, halfHeight) * .94 / 1.026;
-    const transitionStart = Math.min(1.95, planetLimit);
+    const mobileIntroScale = Math.min(originalScale * .9, planetLimit);
+    const transitionStart = Math.min(1.95 * .9, planetLimit);
     const diagonalCoverage = Math.hypot(halfHeight * camera.aspect, halfHeight) * 1.04 / 1.026;
     const transitionEnd = Math.max(10, diagonalCoverage);
     const transitionProgress = Math.pow(Math.min(Math.max((time - 2.2) / 1, 0), 1), 3);
-    const mobileScale = time < 2.2 ? Math.min(originalScale, planetLimit) : transitionStart + (transitionEnd - transitionStart) * transitionProgress;
+    const mobileScale = time < 2.2 ? mobileIntroScale : transitionStart + (transitionEnd - transitionStart) * transitionProgress;
     const scale = mobile ? mobileScale : originalScale;
     const acceleration = Math.min((time - 2.2) / 1, 1); const speed = time < .5 ? .45 : time < 2.2 ? .7 + growth * 3.8 : 4.5 + acceleration * acceleration * 22; const tiltProgress = time < 2.2 ? Math.min(time / 2.2, 1) : 1 + acceleration * acceleration * .18;
+    const floatingFade = time < 2.2 ? 1 : Math.max(0, 1 - (time - 2.2) / .28);
+    const floatingAmplitude = halfHeight * 2 / state.size.height * 9;
+    floatingSystem.current.position.y = mobile ? Math.sin(time * Math.PI * 2 / 3.5) * floatingAmplitude * floatingFade : 0;
     system.current.scale.setScalar(scale); planetSpin.current.rotateY(delta * speed); tilt.current.rotation.x = .16; tilt.current.rotation.z = .24 * tiltProgress; return;
-  } planetSpin.current.rotateY(delta * .12); });
-  return <group ref={system}><group ref={tilt} rotation={[.16, 0, 0]}><group ref={planetSpin}>{quality === "ultra" ? <UltraPlanet /> : <OriginalPlanet />}</group>{quality === "ultra" ? <UltraRings /> : <OriginalRings />}</group></group>;
+  } floatingSystem.current.position.y = 0; planetSpin.current.rotateY(delta * .12); });
+  return <group ref={floatingSystem}><group ref={system}><group ref={tilt} rotation={[.16, 0, 0]}><group ref={planetSpin}>{quality === "ultra" ? <UltraPlanet /> : <OriginalPlanet />}</group>{quality === "ultra" ? <UltraRings /> : <OriginalRings />}</group></group></group>;
 }
 
 function Scene({ reducedMotion, interactive, cinematic, quality, onReady }: { reducedMotion: boolean; interactive: boolean; cinematic: boolean; quality: SaturnQuality; onReady: () => void }) {
