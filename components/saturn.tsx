@@ -43,8 +43,12 @@ function SaturnModel({ reducedMotion, cinematic, quality }: { reducedMotion: boo
     const camera = state.camera as THREE.PerspectiveCamera;
     const halfHeight = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * camera.position.length();
     const planetLimit = Math.min(halfHeight * camera.aspect, halfHeight) * .94 / 1.026;
-    const revealStart = 3.18;
-    const scale = !mobile ? originalScale : time < revealStart ? Math.min(originalScale, planetLimit) : planetLimit + (10 - planetLimit) * Math.pow(Math.min((time - revealStart) / .42, 1), 3);
+    const transitionStart = Math.min(1.95, planetLimit);
+    const diagonalCoverage = Math.hypot(halfHeight * camera.aspect, halfHeight) * 1.04 / 1.026;
+    const transitionEnd = Math.max(10, diagonalCoverage);
+    const transitionProgress = Math.pow(Math.min(Math.max((time - 2.2) / 1, 0), 1), 3);
+    const mobileScale = time < 2.2 ? Math.min(originalScale, planetLimit) : transitionStart + (transitionEnd - transitionStart) * transitionProgress;
+    const scale = mobile ? mobileScale : originalScale;
     const acceleration = Math.min((time - 2.2) / 1, 1); const speed = time < .5 ? .45 : time < 2.2 ? .7 + growth * 3.8 : 4.5 + acceleration * acceleration * 22; const tiltProgress = time < 2.2 ? Math.min(time / 2.2, 1) : 1 + acceleration * acceleration * .18;
     system.current.scale.setScalar(scale); planetSpin.current.rotateY(delta * speed); tilt.current.rotation.x = .16; tilt.current.rotation.z = .24 * tiltProgress; return;
   } planetSpin.current.rotateY(delta * .12); });
