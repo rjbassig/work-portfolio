@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { ProjectCarousel } from "@/components/project-carousel";
 
 type Row = Record<string, string | number | boolean>;
 export type GridcastFigure = "replay" | "accuracy" | "coverage" | "importance" | "market";
@@ -47,16 +48,12 @@ function ResearchChart({ kind, rows }: { kind: number; rows: Row[] }) {
 export function GridcastResearchFigure({ figure }: { figure: GridcastFigure }) { const [rows, setRows] = useState<Row[] | null>(null), [failed, setFailed] = useState(false); useEffect(() => { let current = true; fetch(`/gridcast/data/${files[figure]}.json`).then(response => { if (!response.ok) throw new Error("Data export unavailable"); return response.json() as Promise<Row[]>; }).then(data => { if (current) setRows(data); }).catch(() => { if (current) setFailed(true); }); return () => { current = false; }; }, [figure]); return <div className="report-figure">{rows ? <ResearchChart kind={kinds[figure]} rows={rows} /> : <div className="chart-loading">{failed ? "VERIFIED DATA EXPORT UNAVAILABLE" : "LOADING VERIFIED RESEARCH DATA"}</div>}</div>; }
 
 export function GridcastCarousel() {
-  const cards = [slides[slides.length - 1], ...slides, slides[0]];
-  const [trackIndex, setTrackIndex] = useState(1), [data, setData] = useState<Row[][] | null>(null), [width, setWidth] = useState(0), [animate, setAnimate] = useState(true), [transitioning, setTransitioning] = useState(false);
-  const viewport = useRef<HTMLDivElement>(null), touch = useRef<number | null>(null), resetFrame = useRef<number | null>(null);
-  const active = (trackIndex + slides.length - 1) % slides.length;
-  const move = (direction: -1 | 1) => { if (transitioning) return; if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { setAnimate(false); setTrackIndex(index => { const next = index + direction; return next === 0 ? slides.length : next === cards.length - 1 ? 1 : next; }); requestAnimationFrame(() => setAnimate(true)); return; } setTransitioning(true); setTrackIndex(index => index + direction); };
-  useEffect(() => { Promise.all(slides.map(slide => fetch(`/gridcast/data/${files[slide.figure]}.json`).then(response => { if (!response.ok) throw new Error("Data export unavailable"); return response.json() as Promise<Row[]>; }))).then(setData).catch(() => setData([])); }, []);
-  useLayoutEffect(() => { const node = viewport.current; if (!node) return; const update = () => setWidth(node.clientWidth); update(); const observer = new ResizeObserver(update); observer.observe(node); return () => observer.disconnect(); }, []);
-  useEffect(() => () => { if (resetFrame.current !== null) cancelAnimationFrame(resetFrame.current); }, []);
-  const mobile = width < 700, cardWidth = Math.max(1, Math.min(width * (mobile ? .86 : .8), 920)), gap = mobile ? 12 : 22, offset = width / 2 - cardWidth / 2 - trackIndex * (cardWidth + gap);
-  const interactive = (target: EventTarget | null) => target instanceof Element && Boolean(target.closest("button, a, .research-chart"));
-  const settle = () => { if (trackIndex !== 0 && trackIndex !== cards.length - 1) { setTransitioning(false); return; } setAnimate(false); setTrackIndex(trackIndex === 0 ? slides.length : 1); resetFrame.current = requestAnimationFrame(() => { resetFrame.current = requestAnimationFrame(() => { setAnimate(true); setTransitioning(false); }); }); };
-  return <section className="gridcast-carousel immersive" tabIndex={0} aria-roledescription="carousel" aria-label="Interactive GridCast research visualizations" onKeyDown={event => { if (event.key === "ArrowLeft") { event.preventDefault(); move(-1); } if (event.key === "ArrowRight") { event.preventDefault(); move(1); } }}><div className="immersive-viewport" ref={viewport} onPointerDown={event => { if (!interactive(event.target)) touch.current = event.clientX; }} onPointerUp={event => { if (touch.current === null) return; const distance = event.clientX - touch.current; touch.current = null; if (Math.abs(distance) > 42) move(distance > 0 ? -1 : 1); }}>{width > 0 && <div className={`immersive-track${animate ? "" : " instant"}`} onTransitionEnd={event => { if (event.target === event.currentTarget && event.propertyName === "transform") settle(); }} style={{ gap, transform: `translate3d(${offset}px,0,0)` }}>{cards.map((slide, index) => { const sourceIndex = (index + slides.length - 1) % slides.length, isActive = index === trackIndex; return <article key={`${slide.figure}-${index}`} className={`immersive-card ${isActive ? "active" : ""}`} style={{ flexBasis: cardWidth }} onClick={event => { if (interactive(event.target) || isActive || Math.abs(index - trackIndex) !== 1) return; move(index < trackIndex ? -1 : 1); }} aria-hidden={!isActive}><header><span>{String(sourceIndex + 1).padStart(2, "0")} / 05</span><h2>{slide.title}</h2></header>{data?.[sourceIndex] ? <ResearchChart kind={sourceIndex} rows={data[sourceIndex]} /> : <div className="chart-loading">{data ? "VERIFIED DATA EXPORT UNAVAILABLE" : "LOADING VERIFIED RESEARCH DATA"}</div>}<p>{slide.caption}</p></article>; })}</div>}</div><div className="immersive-controls"><button type="button" onClick={() => move(-1)} disabled={transitioning} aria-label="Previous visualization">←</button><span>{String(active + 1).padStart(2, "0")} / 05</span><button type="button" onClick={() => move(1)} disabled={transitioning} aria-label="Next visualization">→</button><a href="/work/gridcast/report">VIEW RESEARCH REPORT ↗</a></div></section>;
+  const [data, setData] = useState<Row[][] | null>(null);
+  useEffect(() => {
+    Promise.all(slides.map(slide => fetch(`/gridcast/data/${files[slide.figure]}.json`).then(response => {
+      if (!response.ok) throw new Error("Data export unavailable");
+      return response.json() as Promise<Row[]>;
+    }))).then(setData).catch(() => setData([]));
+  }, []);
+  return <ProjectCarousel slides={slides.map(slide => ({ ...slide, id: slide.figure }))} label="Interactive GridCast research visualizations" reportHref="/work/gridcast/report" renderChart={(_, index) => data?.[index] ? <ResearchChart kind={index} rows={data[index]} /> : <div className="chart-loading">{data ? "VERIFIED DATA EXPORT UNAVAILABLE" : "LOADING VERIFIED RESEARCH DATA"}</div>} />;
 }
