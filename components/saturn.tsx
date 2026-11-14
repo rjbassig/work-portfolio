@@ -44,10 +44,11 @@ function SaturnModel({ reducedMotion, cinematic, quality }: { reducedMotion: boo
     // The outer ring radius is 2.32 world units. Keep a small margin for the
     // complete tilted system, then respond to viewport and orientation changes.
     const viewportLimit = Math.min(halfWidth, halfHeight) * .92 / 2.32;
-    const nextSafeScale = Math.max(.82, viewportLimit);
+    const nextSafeScale = Math.max(.2, viewportLimit);
     safeScale.current = nextSafeScale < safeScale.current ? nextSafeScale : THREE.MathUtils.damp(safeScale.current, nextSafeScale, 7, delta);
+    const initialScale = Math.min(.82, safeScale.current);
     const growth = time < .5 ? time / .5 : Math.min((time - .5) / 1.7, 1);
-    const desiredScale = time < .5 ? .82 + growth * .13 : .95 + (1.95 - .95) * (1 - (1 - growth) * (1 - growth));
+    const desiredScale = time < .5 ? initialScale + growth * (.95 - initialScale) : .95 + (1.95 - .95) * (1 - (1 - growth) * (1 - growth));
     const revealStart = 3.18;
     const scale = time < revealStart ? Math.min(desiredScale, safeScale.current) : safeScale.current + (10 - safeScale.current) * Math.pow(Math.min((time - revealStart) / .42, 1), 3);
     const acceleration = Math.min((time - 2.2) / 1, 1); const speed = time < .5 ? .45 : time < 2.2 ? .7 + growth * 3.8 : 4.5 + acceleration * acceleration * 22; const tiltProgress = time < 2.2 ? Math.min(time / 2.2, 1) : 1 + acceleration * acceleration * .18;
