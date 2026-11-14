@@ -35,22 +35,16 @@ function UltraRings() {
 }
 
 function SaturnModel({ reducedMotion, cinematic, quality }: { reducedMotion: boolean; cinematic: boolean; quality: SaturnQuality }) {
-  const system = useRef<THREE.Group>(null); const tilt = useRef<THREE.Group>(null); const planetSpin = useRef<THREE.Group>(null); const safeScale = useRef(.82);
+  const system = useRef<THREE.Group>(null); const tilt = useRef<THREE.Group>(null); const planetSpin = useRef<THREE.Group>(null);
   useFrame((state, delta) => { if (reducedMotion || !system.current || !tilt.current || !planetSpin.current) return; const time = state.clock.getElapsedTime(); if (cinematic) {
+    const growth = time < 0.5 ? time / 0.5 : Math.min((time - 0.5) / 1.7, 1);
+    const originalScale = time < 0.5 ? .82 + growth * .13 : time < 2.2 ? .95 + (1.95 - .95) * (1 - (1 - growth) * (1 - growth)) : 1.95 + (10 - 1.95) * Math.pow(Math.min((time - 2.2) / 1, 1), 3);
+    const mobile = state.size.width <= 800;
     const camera = state.camera as THREE.PerspectiveCamera;
-    const distance = camera.position.length();
-    const halfHeight = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * distance;
-    const halfWidth = halfHeight * camera.aspect;
-    // The outer ring radius is 2.32 world units. Keep a small margin for the
-    // complete tilted system, then respond to viewport and orientation changes.
-    const viewportLimit = Math.min(halfWidth, halfHeight) * .92 / 2.32;
-    const nextSafeScale = Math.max(.2, viewportLimit);
-    safeScale.current = nextSafeScale < safeScale.current ? nextSafeScale : THREE.MathUtils.damp(safeScale.current, nextSafeScale, 7, delta);
-    const initialScale = Math.min(.82, safeScale.current);
-    const growth = time < .5 ? time / .5 : Math.min((time - .5) / 1.7, 1);
-    const desiredScale = time < .5 ? initialScale + growth * (.95 - initialScale) : .95 + (1.95 - .95) * (1 - (1 - growth) * (1 - growth));
+    const halfHeight = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * camera.position.length();
+    const planetLimit = Math.min(halfHeight * camera.aspect, halfHeight) * .94 / 1.026;
     const revealStart = 3.18;
-    const scale = time < revealStart ? Math.min(desiredScale, safeScale.current) : safeScale.current + (10 - safeScale.current) * Math.pow(Math.min((time - revealStart) / .42, 1), 3);
+    const scale = !mobile ? originalScale : time < revealStart ? Math.min(originalScale, planetLimit) : planetLimit + (10 - planetLimit) * Math.pow(Math.min((time - revealStart) / .42, 1), 3);
     const acceleration = Math.min((time - 2.2) / 1, 1); const speed = time < .5 ? .45 : time < 2.2 ? .7 + growth * 3.8 : 4.5 + acceleration * acceleration * 22; const tiltProgress = time < 2.2 ? Math.min(time / 2.2, 1) : 1 + acceleration * acceleration * .18;
     system.current.scale.setScalar(scale); planetSpin.current.rotateY(delta * speed); tilt.current.rotation.x = .16; tilt.current.rotation.z = .24 * tiltProgress; return;
   } planetSpin.current.rotateY(delta * .12); });
