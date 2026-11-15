@@ -56,7 +56,7 @@ export function ProjectCarousel<T extends CarouselSlide>({
   const cardWidth = Math.max(1, Math.min(width * (mobile ? 0.86 : 0.8), 920));
   const gap = mobile ? 12 : 22;
   const offset = width / 2 - cardWidth / 2 - trackIndex * (cardWidth + gap);
-  const interactive = (target: EventTarget | null) => target instanceof Element && Boolean(target.closest("button, a, input, select, .research-chart, .crash-live-chart"));
+  const interactive = (target: EventTarget | null) => target instanceof Element && Boolean(target.closest("button, a, input, select, .research-chart, .crash-live-chart, .crash-map"));
   const settle = () => {
     if (trackIndex !== 0 && trackIndex !== cards.length - 1) {
       setTransitioning(false);

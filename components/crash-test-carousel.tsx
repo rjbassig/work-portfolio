@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { ProjectCarousel } from "@/components/project-carousel";
+import { CrashTestRiskMap } from "@/components/crash-test-risk-map";
 
 type History = { week: string; observed: number; predicted: number; baseline: number };
 type Beat = { police_beat: string | number; risk_rank: number; relative_risk: number };
@@ -10,8 +11,8 @@ type Overview = { summary: { held_out_2025: { models: Record<string, { mae: numb
 type Calibration = { curve: { mean_predicted_probability: number; observed_frequency: number }[] };
 
 const slides = [
+  { id: "map", title: "San Diego police beat explorer", caption: "Official SDPD law-beat boundaries with aggregate relative forecast risk. Select a beat for its verified weekly metrics." },
   { id: "forecast", title: "Observed versus predicted", caption: "Citywide historical replay from the standalone Crash Test application. Unit: collision reports per week." },
-  { id: "ranking", title: "Police beat risk ranking", caption: "Relative predicted collision risk by official San Diego Police beat." },
   { id: "evaluation", title: "Held-out model evaluation", caption: "Chronological 2025 holdout metrics from the standalone research API." },
   { id: "calibration", title: "Occurrence calibration", caption: "2024-only calibration evaluated against the 2025 holdout." },
   { id: "importance", title: "Feature importance", caption: "Held-out permutation importance for the selected forecasting model." },
@@ -34,9 +35,8 @@ function CalibrationChart({ data }: { data: Calibration }) { const width=900,hei
 export function CrashTestCarousel() {
   const [history,setHistory]=useState<History[]|null>(null),[beats,setBeats]=useState<Beat[]|null>(null),[overview,setOverview]=useState<Overview|null>(null),[calibration,setCalibration]=useState<Calibration|null>(null),[importance,setImportance]=useState<Importance[]|null>(null),[failed,setFailed]=useState(false);
   useEffect(()=>{let active=true;Promise.all(["history","geography/beats","overview","calibration","explainability"].map(path=>fetch(`/api/crash-test/api/${path}`).then(response=>{if(!response.ok)throw new Error("Unavailable");return response.json()}))).then(([historyData,beatData,overviewData,calibrationData,importanceData])=>{if(!active)return;setHistory(historyData);setBeats(beatData.metrics);setOverview(overviewData);setCalibration(calibrationData);setImportance(importanceData);}).catch(()=>active&&setFailed(true));return()=>{active=false}},[]);
-  const ranking=useMemo(()=>beats?[...beats].sort((a,b)=>a.risk_rank-b.risk_rank).slice(0,8).map(row=>({name:`Beat ${row.police_beat}`,value:row.relative_risk})):[],[beats]);
   const models=useMemo(()=>overview?Object.entries(overview.summary.held_out_2025.models).map(([name,result])=>({name:name.replaceAll("_"," "),value:result.mae})).sort((a,b)=>a.value-b.value):[],[overview]);
   const features=useMemo(()=>importance?[...importance].sort((a,b)=>b.mae_importance_mean-a.mae_importance_mean).map(row=>({name:row.feature,value:row.mae_importance_mean})):[],[importance]);
   const ready=history&&beats&&overview&&calibration&&importance;
-  return <ProjectCarousel slides={slides.map(slide=>({...slide}))} label="Interactive Crash Test research visualizations" reportHref="/work/crash-test/report" renderChart={(_,index)=>{if(!ready)return <div className="chart-loading">{failed?"VERIFIED STANDALONE DATA UNAVAILABLE":"LOADING VERIFIED STANDALONE DATA"}</div>;if(index===0)return <ForecastChart rows={history}/>;if(index===1)return <BarsChart title="GEOGRAPHIC EXPLORER / RELATIVE RISK" rows={ranking} note="Relative predicted risk compared with the citywide mean." suffix="×"/>;if(index===2)return <BarsChart title="2025 HELD-OUT / MAE ↓" rows={models} note="Mean absolute error by evaluated count model."/>;if(index===3)return <CalibrationChart data={calibration}/>;return <BarsChart title="EXPLAINABILITY / PERMUTATION IMPORTANCE" rows={features} note="Held-out MAE increase after feature permutation."/>;}} />;
+  return <ProjectCarousel slides={slides.map(slide=>({...slide}))} label="Interactive Crash Test research visualizations" reportHref="/work/crash-test/report" renderChart={(_,index)=>{if(!ready)return <div className="chart-loading">{failed?"VERIFIED STANDALONE DATA UNAVAILABLE":"LOADING VERIFIED STANDALONE DATA"}</div>;if(index===0)return <CrashTestRiskMap/>;if(index===1)return <ForecastChart rows={history}/>;if(index===2)return <BarsChart title="2025 HELD-OUT / MAE ↓" rows={models} note="Mean absolute error by evaluated count model."/>;if(index===3)return <CalibrationChart data={calibration}/>;return <BarsChart title="EXPLAINABILITY / PERMUTATION IMPORTANCE" rows={features} note="Held-out MAE increase after feature permutation."/>;}} />;
 }
