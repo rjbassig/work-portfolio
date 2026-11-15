@@ -13,7 +13,7 @@ export function ProjectCarousel<T extends CarouselSlide>({
   slides: T[];
   label: string;
   reportHref?: string;
-  renderChart: (slide: T, index: number) => ReactNode;
+  renderChart: (slide: T, index: number, active?: boolean) => ReactNode;
 }) {
   const cards = [slides[slides.length - 1], ...slides, slides[0]];
   const [trackIndex, setTrackIndex] = useState(1);
@@ -56,7 +56,7 @@ export function ProjectCarousel<T extends CarouselSlide>({
   const cardWidth = Math.max(1, Math.min(width * (mobile ? 0.86 : 0.8), 920));
   const gap = mobile ? 12 : 22;
   const offset = width / 2 - cardWidth / 2 - trackIndex * (cardWidth + gap);
-  const interactive = (target: EventTarget | null) => target instanceof Element && Boolean(target.closest("button, a, input, select, .research-chart, .crash-live-chart, .crash-map"));
+  const interactive = (target: EventTarget | null) => target instanceof Element && Boolean(target.closest("button, a, input, select, .research-chart, .crash-live-chart, .crash-map, .orbitrisk-scene"));
   const settle = () => {
     if (trackIndex !== 0 && trackIndex !== cards.length - 1) {
       setTransitioning(false);
@@ -97,7 +97,7 @@ export function ProjectCarousel<T extends CarouselSlide>({
             move(index < trackIndex ? -1 : 1);
           }} aria-hidden={!isActive}>
             <header><span>{String(sourceIndex + 1).padStart(2, "0")} / {String(slides.length).padStart(2, "0")}</span><h2>{slide.title}</h2></header>
-            {renderChart(slide, sourceIndex)}
+            {renderChart(slide, sourceIndex, isActive)}
             <p>{slide.caption}</p>
           </article>;
         })}
