@@ -10,6 +10,7 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  experimental: { agentUpgrade: "security" },
   outputFileTracingRoot: path.join(__dirname),
   distDir: process.env.NEXT_DIST_DIR || ".next",
   productionBrowserSourceMaps: false,
