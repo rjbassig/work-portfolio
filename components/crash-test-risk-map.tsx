@@ -6,7 +6,7 @@ import proj4 from "proj4";
 import { feature } from "topojson-client";
 import { useEffect, useRef, useState } from "react";
 
-maplibregl.setWorkerUrl(new URL("maplibre-gl/dist/maplibre-gl-csp-worker.js", import.meta.url).toString());
+maplibregl.setWorkerUrl(new URL("maplibre-gl/dist/maplibre-gl-worker.mjs", import.meta.url).toString());
 
 proj4.defs("EPSG:2230", "+proj=lcc +lat_0=32.1666666666667 +lon_0=-116.25 +lat_1=32.7833333333333 +lat_2=33.8833333333333 +x_0=2000000 +y_0=500000 +datum=NAD83 +units=us-ft +no_defs +type=crs");
 
