@@ -15,7 +15,8 @@ export function OrbitRiskScene({ trajectories, selected }: { trajectories: { poi
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
     return () => observer.disconnect();
   }, []);
-  const background = light ? "#e4e6df" : "#071015";
+  // Space remains black in both themes; only the UI chrome changes with the theme.
+  const background = "#05070a";
   const selectedColor = light ? "#245f68" : "#9fe1ff";
   const orbitColor = light ? "#6c8585" : "#657987";
   return <div className="scene" aria-label="Interactive three-dimensional Earth with public-TLE trajectories"><Canvas camera={{ position: [0, 2.5, 5.2], fov: 44 }} dpr={[1, 1.5]}><color attach="background" args={[background]} /><ambientLight intensity={.5} /><directionalLight position={[5, 3, 4]} intensity={2} color={light ? "#7b8f90" : "#b9e6ff"} /><Stars radius={50} depth={20} count={700} factor={2} saturation={0} fade speed={.2} /><Earth />{trajectories.map((trajectory, index) => <Orbit key={index} points={trajectory.points} color={index === selected ? selectedColor : orbitColor} selected={index === selected} />)}<OrbitControls enablePan={false} minDistance={3} maxDistance={10} autoRotate autoRotateSpeed={.15} /></Canvas></div>;
