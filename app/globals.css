@@ -91,3 +91,16 @@
 .crash-map,.crash-map-message{background:var(--viz-surface);color:var(--viz-muted)}
 .orbitrisk-scene{background:#071015}
  .orbitrisk-scene{height:360px;border:1px solid var(--rule);background:#071015;overflow:hidden}.orbitrisk-scene .scene{height:100%}.orbitrisk-scene canvas{display:block}.orbit-events{display:grid;max-height:360px;overflow:auto}.orbit-events article{display:grid;grid-template-columns:34px 1fr auto;gap:12px;align-items:center;padding:14px;border-bottom:1px solid var(--rule);font:11px "DM Mono",monospace;color:var(--ink)}.orbit-events article:last-child{border-bottom:0}.orbit-events b,.orbit-events strong{font-weight:500}.orbit-events strong{text-align:right}.orbit-events i{color:var(--accent);font-style:normal}.orbit-events small{display:block;margin-top:4px;color:var(--muted);font-size:9px;font-weight:400}.orbital-population svg{min-height:360px}@media(max-width:800px){.orbitrisk-scene{height:275px}.orbit-events article{grid-template-columns:25px 1fr;gap:8px}.orbit-events strong{grid-column:2;text-align:left}.orbital-population svg{min-height:235px}}
+
+/* Theme changes share one short transition; chart surfaces keep their own readable palette. */
+html,body,main,.site-header,.footer,.project-row,.writing-index>a,.immersive,.immersive-card,.research-chart,.research-chart-head,.crash-map,.crash-map-message,.orbitrisk-scene,.record-meta,.record-grid section,.record-datasets>a,.theme-toggle,.immersive-controls button{transition:background-color .22s ease,color .22s ease,border-color .22s ease,fill .22s ease,stroke .22s ease}
+[data-theme="light"] .immersive{background:#e9ebe5;--viz-bg:#e9ebe5;--viz-panel:#e3e7df;--viz-surface:#f0f1eb;--viz-ink:#1f2926;--viz-muted:#55635e;--viz-rule:#adb7af;color:var(--viz-ink)}
+[data-theme="light"] .immersive-card{background:var(--viz-panel);border-color:var(--viz-rule)}
+[data-theme="light"] .research-chart{background:var(--viz-surface);border-color:var(--viz-rule)}
+[data-theme="light"] .chart-tooltip{background:#f6f7f2f2;color:var(--viz-ink);border-color:var(--viz-rule)}
+[data-theme="light"] .chart-axis{fill:#43504c;color:#43504c}
+[data-theme="light"] .chart-grid{stroke:#aeb9b2}
+[data-theme="light"] .gridcast-frame{background:#e3e7df}
+[data-theme="light"] .gridcast-control{background:#f0f1ebd9;border-color:#adb7af;color:#1f2926}
+[data-theme="light"] .crash-map,[data-theme="light"] .crash-map-message{background:#f0f1eb}
+[data-theme="light"] .orbitrisk-scene{background:#e4e6df}

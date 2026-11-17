@@ -42,9 +42,12 @@ export function CrashTestRiskMap() {
           const beat = String(item.properties?.beat ?? "");
           item.properties = { ...item.properties, ...metrics.get(beat), beat };
         });
+        const light = document.documentElement.dataset.theme === "light";
+        const mapBackground = light ? "#e4e6df" : "#151919";
+        const beatLine = light ? "#415752" : "#a6d3f2";
         map = new maplibregl.Map({
           container: node.current,
-          style: { version: 8, sources: {}, layers: [{ id: "background", type: "background", paint: { "background-color": "#151919" } }] },
+          style: { version: 8, sources: {}, layers: [{ id: "background", type: "background", paint: { "background-color": mapBackground } }] },
           center: [-117.14, 32.77],
           zoom: 9.6,
         });
@@ -52,7 +55,7 @@ export function CrashTestRiskMap() {
           if (!map) return;
           map.addSource("beats", { type: "geojson", data: geo });
           map.addLayer({ id: "beat-fill", type: "fill", source: "beats", paint: { "fill-color": ["interpolate", ["linear"], ["coalesce", ["get", "relative_risk"], 0], 0, "#132237", 1, "#2368ae", 2.5, "#9ed6ff"], "fill-opacity": .82 } });
-          map.addLayer({ id: "beat-line", type: "line", source: "beats", paint: { "line-color": "#a6d3f2", "line-width": .55, "line-opacity": .65 } });
+          map.addLayer({ id: "beat-line", type: "line", source: "beats", paint: { "line-color": beatLine, "line-width": .55, "line-opacity": .65 } });
           map.on("mouseenter", "beat-fill", () => { map?.getCanvas().style.setProperty("cursor", "pointer"); });
           map.on("mouseleave", "beat-fill", () => { map?.getCanvas().style.setProperty("cursor", ""); });
           map.on("click", "beat-fill", event => {
@@ -66,6 +69,14 @@ export function CrashTestRiskMap() {
           });
           setMessage("");
         });
+        const observer = new MutationObserver(() => {
+          if (!map) return;
+          const isLight = document.documentElement.dataset.theme === "light";
+          map.setPaintProperty("background", "background-color", isLight ? "#e4e6df" : "#151919");
+          map.setPaintProperty("beat-line", "line-color", isLight ? "#415752" : "#a6d3f2");
+        });
+        observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+        map.once("remove", () => observer.disconnect());
       })
       .catch(error => setMessage(error instanceof Error ? error.message : "Verified map data unavailable"));
     return () => { cancelled = true; map?.remove(); };
