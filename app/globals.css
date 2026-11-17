@@ -104,3 +104,6 @@ html,body,main,.site-header,.footer,.project-row,.writing-index>a,.immersive,.im
 [data-theme="light"] .gridcast-control{background:#f0f1ebd9;border-color:#adb7af;color:#1f2926}
 [data-theme="light"] .crash-map,[data-theme="light"] .crash-map-message{background:#f0f1eb}
 [data-theme="light"] .orbitrisk-scene{background:#e4e6df}
+
+/* Homepage previews inherit the page surface instead of carrying image-like rectangles. */
+.project-preview{background:var(--panel);transition:background-color .22s ease,border-color .22s ease,color .22s ease}
